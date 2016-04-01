@@ -79,9 +79,9 @@ $(function() {
 		port: <?php echo $environment['Mjpeg']['port']; ?>,
 		width: size,
 		height: size * 0.85,
-		quality: <?php echo ($environment['Stream'][0]['quality']) ? $environment['Stream'][0]['quality'] : '90'; ?>,
-		topics: <?php echo $streamTopics; ?>,
-		labels: <?php echo $streamNames; ?>,
+		quality: "<?php echo $environment['Stream']?(($environment['Stream'][0]['quality']) ? $environment['Stream'][0]['quality'] : '90'):''; ?>",
+		topics: "<?php echo $streamTopics; ?>",
+		labels: "<?php echo $streamNames; ?>",
         tfObject:_TF,
         tf:'arm_mount_plate_link'
 	});
@@ -130,7 +130,21 @@ $(function() {
 		showFeedback(0,false,message.feedback.message);
 	});
 
-
+    $.ajax({
+        type: "POST",
+        url: '/Analytics/add',
+        data: {
+            'Analytics':{
+                'os':navigator.oscpu,
+                'browser':navigator.userAgent,
+                'screen_size':$(window).width()+"x"+$(window).height(),
+                'user_id':"<?php echo $userId?>"
+            }
+        },
+        success: function(){
+            console.log('as')
+        },
+    });
 
 
 	/**
@@ -194,10 +208,14 @@ $(function() {
 			if (isset($appointment['Appointment']['user_id'])){
 				echo $appointment['Appointment']['user_id'];
 			}
-			else if($_GET['userid']){
+
+            else if(isset($userId)){
+                echo $userId;
+            }
+			else if(isset($_GET['userid'])){
                 echo $_GET['userid'];
 			}
-            else{
+           else{
                 echo '';
             }
 		?>"
